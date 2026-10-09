@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -24,6 +24,13 @@ export const metadata: Metadata = {
   title: "PolyGlot Code-Lab — read code in your own language",
   description:
     "Paste a snippet and get a plain explanation, or a bug hunt, in the language you think in.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#FAF8F2",
 };
 
 export default function RootLayout({
