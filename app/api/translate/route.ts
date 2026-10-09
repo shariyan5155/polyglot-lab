@@ -3,9 +3,9 @@ import { GoogleGenAI } from "@google/genai";
 
 const MODELS = [
   "gemini-3.8-flash",
+  "gemini-3.7-flash",
+  "gemini-3.5-flash",
   "gemini-3.5-flash-lite",
-  "gemini-3.0-flash",
-  "gemini-3.0-pro",
 ];
 
 type Mode = "write" | "explain" | "diagnose";
@@ -21,10 +21,10 @@ function buildSystemInstruction(language: string, mode: Mode) {
   const languageRule = isEnglish
     ? "Reply in clear, natural English."
     : `LANGUAGE RULE (strict): Write the ENTIRE reply in ${language}, using its native script. ` +
-      `That includes every heading, label, sentence, bullet point and closing remark — ` +
-      `do not write any English prose and do not add English translations. ` +
-      `Only source code, identifiers, keywords and library names stay as they are. ` +
-      `Comments inside any code you write must also be in ${language}.`;
+    `That includes every heading, label, sentence, bullet point and closing remark — ` +
+    `do not write any English prose and do not add English translations. ` +
+    `Only source code, identifiers, keywords and library names stay as they are. ` +
+    `Comments inside any code you write must also be in ${language}.`;
 
   const task: Record<Mode, string> = {
     write:
@@ -52,10 +52,10 @@ function buildSystemInstruction(language: string, mode: Mode) {
 
 export async function POST(req: NextRequest) {
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
     if (!apiKey) {
       return NextResponse.json(
-        { error: "GEMINI_API_KEY is not configured in .env.local" },
+        { error: "GEMINI_API_KEY is not configured in .env.local. Please restart the dev server (npm run dev) after updating .env.local." },
         { status: 500 }
       );
     }

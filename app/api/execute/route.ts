@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 4. Fallback Execution Simulation via Gemini
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
     if (apiKey) {
       const ai = new GoogleGenAI({ apiKey });
       const prompt = `You are a strict, sandboxed code execution runtime for ${lang || "code"}.

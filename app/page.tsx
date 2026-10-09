@@ -134,13 +134,13 @@ export default function Landing() {
 
       {/* Masthead */}
       <header className="anim-fade border-b border-foreground">
-        <div className="mx-auto flex max-w-[1400px] items-baseline justify-between px-4 sm:px-6 py-4">
-          <span className="font-heading text-xl sm:text-2xl font-semibold tracking-tight">
+        <div className="mx-auto flex max-w-[1400px] items-baseline justify-between px-6 py-4">
+          <span className="font-heading text-2xl font-semibold tracking-tight">
             PolyGlot <span className="font-normal italic">Code-Lab</span>
           </span>
           <button
             onClick={launch}
-            className="text-xs sm:text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline cursor-pointer"
+            className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
           >
             Skip to the lab →
           </button>
@@ -148,7 +148,7 @@ export default function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="mx-auto grid max-w-[1400px] gap-8 sm:gap-12 px-4 sm:px-6 pt-10 sm:pt-16 pb-14 sm:pb-20 lg:grid-cols-[1.15fr_1fr] lg:pt-24">
+      <section className="mx-auto grid max-w-[1400px] gap-12 px-6 pt-16 pb-20 lg:grid-cols-[1.15fr_1fr] lg:pt-24">
         <div className="flex flex-col">
           {/* Rotating greeting */}
           <div className="flex h-8 items-center gap-3 font-mono text-xs tracking-widest text-muted-foreground uppercase">
@@ -157,13 +157,13 @@ export default function Landing() {
               {g.lang}
             </span>
           </div>
-          <div className="mt-2 sm:mt-4 h-[1.15em] overflow-hidden font-heading text-[clamp(2.75rem,10vw,8.5rem)] leading-[1.1] font-medium tracking-tight text-vermilion italic">
+          <div className="mt-4 h-[1.15em] overflow-hidden font-heading text-[clamp(4rem,11vw,9.5rem)] leading-[1.1] font-medium tracking-tight text-vermilion italic">
             <div key={g.word} className="anim-word">
               {g.word}
             </div>
           </div>
 
-          <h1 className="mt-6 sm:mt-8 max-w-2xl font-heading text-3xl sm:text-4xl leading-[1.08] font-medium tracking-tight md:text-5xl">
+          <h1 className="mt-8 max-w-2xl font-heading text-4xl leading-[1.08] font-medium tracking-tight md:text-5xl">
             <RevealWords text="Write it. Read it. Debug it." delay={300} />
             <br />
             <span className="text-muted-foreground">
@@ -172,7 +172,7 @@ export default function Landing() {
           </h1>
 
           <p
-            className="anim-rise mt-4 sm:mt-6 max-w-lg text-[15px] sm:text-[17px] leading-7 sm:leading-8 text-muted-foreground"
+            className="anim-rise mt-6 max-w-lg text-[17px] leading-8 text-muted-foreground"
             style={{ animationDelay: "1100ms" }}
           >
             A pair programmer that lives in your editor and answers in the
@@ -181,10 +181,10 @@ export default function Landing() {
           </p>
 
           <div
-            className="anim-rise mt-8 sm:mt-10 flex flex-wrap items-center gap-4 sm:gap-5"
+            className="anim-rise mt-10 flex flex-wrap items-center gap-5"
             style={{ animationDelay: "1300ms" }}
           >
-            <Button size="lg" onClick={launch} className="group gap-3 text-base tracking-normal normal-case cursor-pointer">
+            <Button size="lg" onClick={launch} className="group gap-3 text-base tracking-normal normal-case">
               Launch the lab
               <ArrowRight className="size-4! transition-transform group-hover:translate-x-1" />
             </Button>
@@ -196,19 +196,19 @@ export default function Landing() {
 
         {/* Code window */}
         <div
-          className="anim-rise self-center w-full border border-foreground bg-card shadow-[6px_6px_0_0_var(--ink)] sm:shadow-[10px_10px_0_0_var(--ink)]"
+          className="anim-rise self-center border border-foreground bg-card shadow-[10px_10px_0_0_var(--ink)]"
           style={{ animationDelay: "700ms" }}
           aria-hidden
         >
-          <div className="flex items-center justify-between border-b border-foreground bg-secondary px-3 sm:px-4 py-2 font-mono text-xs">
+          <div className="flex items-center justify-between border-b border-foreground bg-secondary px-4 py-2 font-mono text-xs">
             <span>binary_search.js</span>
             <span className="text-muted-foreground">javascript</span>
           </div>
-          <pre className="overflow-x-auto px-3 sm:px-4 py-4 font-mono text-[11.5px] sm:text-[12.5px] leading-5 sm:leading-6">
+          <pre className="overflow-hidden px-4 py-4 font-mono text-[12.5px] leading-6">
             {CODE_LINES.map((l, i) => (
               <div
                 key={i}
-                className="anim-line flex gap-3 sm:gap-4"
+                className="anim-line flex gap-4"
                 style={{ animationDelay: `${1000 + i * 140}ms` }}
               >
                 <span className="w-4 text-right text-muted-foreground/60 select-none">
@@ -220,13 +220,13 @@ export default function Landing() {
             <span className="anim-caret ml-8 inline-block h-4 w-[7px] translate-y-0.5 bg-vermilion" />
           </pre>
           <div
-            className="anim-rise border-t border-foreground bg-background px-3 sm:px-4 py-4"
+            className="anim-rise border-t border-foreground bg-background px-4 py-4"
             style={{ animationDelay: "2500ms" }}
           >
             <p className="font-mono text-[11px] tracking-widest text-vermilion uppercase">
               PolyGlot · हिन्दी
             </p>
-            <p className="mt-2 text-[14px] sm:text-[15px] leading-6 sm:leading-7">
+            <p className="mt-2 text-[15px] leading-7">
               यह फ़ंक्शन क्रमबद्ध सूची को बार-बार आधा बाँटकर लक्ष्य खोजता है — हर
               चरण में खोज का दायरा आधा हो जाता है।
             </p>
@@ -235,10 +235,10 @@ export default function Landing() {
       </section>
 
       {/* Language ticker */}
-      <div className="overflow-hidden border-y border-foreground bg-foreground py-2.5 sm:py-3 text-background">
-        <div className="anim-marquee flex w-max gap-8 sm:gap-12 whitespace-nowrap font-heading text-lg sm:text-xl italic">
+      <div className="overflow-hidden border-y border-foreground bg-foreground py-3 text-background">
+        <div className="anim-marquee flex w-max gap-12 whitespace-nowrap font-heading text-xl italic">
           {[...GREETINGS, ...GREETINGS, ...GREETINGS, ...GREETINGS].map((x, i) => (
-            <span key={i} className="flex items-center gap-8 sm:gap-12">
+            <span key={i} className="flex items-center gap-12">
               {x.word}
               <span className="text-vermilion not-italic">✺</span>
             </span>
@@ -247,12 +247,12 @@ export default function Landing() {
       </div>
 
       {/* Pillars */}
-      <section className="mx-auto max-w-[1400px] px-4 sm:px-6 py-12 sm:py-20">
+      <section className="mx-auto max-w-[1400px] px-6 py-20">
         <div className="grid divide-y divide-foreground border border-foreground md:grid-cols-3 md:divide-x md:divide-y-0">
           {PILLARS.map((p, i) => (
             <article
               key={p.title}
-              className="group bg-card p-6 sm:p-8 transition-colors hover:bg-foreground hover:text-background"
+              className="group bg-card p-8 transition-colors hover:bg-foreground hover:text-background"
             >
               <div className="flex items-center justify-between">
                 <p.icon className="size-6" strokeWidth={1.5} />
@@ -260,28 +260,28 @@ export default function Landing() {
                   0{i + 1}
                 </span>
               </div>
-              <h2 className="mt-6 sm:mt-10 font-heading text-2xl sm:text-3xl font-medium tracking-tight">
+              <h2 className="mt-10 font-heading text-3xl font-medium tracking-tight">
                 {p.title}
               </h2>
-              <p className="mt-3 max-w-xs text-[14px] sm:text-[15px] leading-6 sm:leading-7 text-muted-foreground group-hover:text-background/70">
+              <p className="mt-3 max-w-xs text-[15px] leading-7 text-muted-foreground group-hover:text-background/70">
                 {p.body}
               </p>
             </article>
           ))}
         </div>
 
-        <div className="mt-12 sm:mt-16 flex flex-col items-start justify-between gap-6 border-b border-foreground pb-12 sm:pb-16 md:flex-row md:items-end">
-          <h2 className="max-w-2xl font-heading text-3xl sm:text-4xl leading-tight font-medium tracking-tight md:text-5xl">
+        <div className="mt-16 flex flex-col items-start justify-between gap-6 border-b border-foreground pb-16 md:flex-row md:items-end">
+          <h2 className="max-w-2xl font-heading text-4xl leading-tight font-medium tracking-tight md:text-5xl">
             Your editor, with a teammate who speaks{" "}
             <span className="italic text-vermilion">your</span> language.
           </h2>
-          <Button size="lg" onClick={launch} className="gap-3 text-base tracking-normal normal-case cursor-pointer">
+          <Button size="lg" onClick={launch} className="gap-3 text-base tracking-normal normal-case">
             Open the lab <ArrowRight className="size-4!" />
           </Button>
         </div>
       </section>
 
-      <footer className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3 px-4 sm:px-6 pb-8 text-xs sm:text-sm text-muted-foreground">
+      <footer className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-2 px-6 pb-8 text-sm text-muted-foreground">
         <span>Built for Nexathon · Tracks 04 &amp; 05</span>
         <span className="flex gap-5">
           <Link href="/terms" className="underline underline-offset-4 hover:text-foreground">

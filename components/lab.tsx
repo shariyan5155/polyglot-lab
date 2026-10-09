@@ -283,19 +283,6 @@ export function Lab() {
   const [execDuration, setExecDuration] = useState<number | null>(null);
   const [stdinValue, setStdinValue] = useState("");
 
-  // Mobile / Small Screen Panel Switcher: "editor" | "assistant" | "explorer"
-  const [mobileTab, setMobileTab] = useState<"editor" | "assistant" | "explorer">("editor");
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(typeof window !== "undefined" && window.innerWidth < 1024);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const folderInputRef = useRef<HTMLInputElement | null>(null);
@@ -557,33 +544,21 @@ export function Lab() {
 
   const insertAtCursor = (code: string) => {
     const ed = editorRef.current;
-    if (ed) {
-      const sel = ed.getSelection();
-      if (sel) {
-        ed.executeEdits("polyglot", [
-          { range: sel, text: code, forceMoveMarkers: true },
-        ]);
-        ed.focus();
-      }
-    }
-    if (isMobile) {
-      setMobileTab("editor");
+    if (!ed) return;
+    const sel = ed.getSelection();
+    if (sel) {
+      ed.executeEdits("polyglot", [
+        { range: sel, text: code, forceMoveMarkers: true },
+      ]);
+      ed.focus();
     }
   };
 
-  const replaceFile = (code: string) => {
-    updateCode(active.id, code + "\n");
-    if (isMobile) {
-      setMobileTab("editor");
-    }
-  };
+  const replaceFile = (code: string) => updateCode(active.id, code + "\n");
 
   const openFile = (id: string) => {
     setOpenIds((o) => (o.includes(id) ? o : [...o, id]));
     setActiveId(id);
-    if (isMobile) {
-      setMobileTab("editor");
-    }
   };
 
   const closeTab = (id: string) => {
@@ -609,9 +584,6 @@ export function Lab() {
     setFiles((fs) => [...fs, { id, name, language: languageFor(name), code: "" }]);
     setOpenIds((o) => [...o, id]);
     setActiveId(id);
-    if (isMobile) {
-      setMobileTab("editor");
-    }
   };
 
   // Open Local Files from user system
@@ -662,9 +634,6 @@ export function Lab() {
       setFiles((prev) => [...prev, ...newEntries]);
       setOpenIds((prev) => [...prev, ...newEntries.map((e) => e.id)]);
       setActiveId(newEntries[0].id);
-      if (isMobile) {
-        setMobileTab("editor");
-      }
     }
     e.target.value = "";
   };
@@ -703,9 +672,6 @@ export function Lab() {
           setFiles(newEntries);
           setOpenIds(newEntries.slice(0, 5).map((e) => e.id));
           setActiveId(newEntries[0].id);
-          if (isMobile) {
-            setMobileTab("editor");
-          }
         }
         return;
       } catch (err: any) {
@@ -737,9 +703,6 @@ export function Lab() {
       setOpenIds(newEntries.slice(0, 5).map((e) => e.id));
       setActiveId(newEntries[0].id);
       setFolderTitle("Local Folder");
-      if (isMobile) {
-        setMobileTab("editor");
-      }
     }
     e.target.value = "";
   };
@@ -749,7 +712,7 @@ export function Lab() {
   const canRun = !loading && (hasInstruction || hasCode);
 
   return (
-    <div className="flex h-screen h-[100dvh] flex-col overflow-hidden bg-background text-foreground selection:bg-foreground selection:text-background">
+    <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground selection:bg-foreground selection:text-background">
       {/* Hidden File System Inputs */}
       <input
         type="file"
@@ -770,11 +733,11 @@ export function Lab() {
       />
 
       {/* Main Title Bar */}
-      <header className="flex h-11 shrink-0 items-center justify-between border-b border-foreground px-2 sm:px-4 bg-card select-none">
-        <div className="flex items-center gap-2 sm:gap-4">
+      <header className="flex h-11 shrink-0 items-center justify-between border-b border-foreground px-4 bg-card select-none">
+        <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="group flex items-center gap-1 sm:gap-1.5 font-heading text-base sm:text-lg font-semibold tracking-tight hover:opacity-80 shrink-0"
+            className="group flex items-center gap-1.5 font-heading text-lg font-semibold tracking-tight hover:opacity-80"
             title="Return to Home"
           >
             <span className="text-muted-foreground group-hover:text-foreground text-xs font-mono transition-transform group-hover:-translate-x-0.5">
@@ -784,71 +747,22 @@ export function Lab() {
               PolyGlot <span className="font-normal italic">Code-Lab</span>
             </span>
           </Link>
-          <span className="hidden text-xs text-muted-foreground border-l border-border pl-4 xl:inline font-mono">
+          <span className="hidden text-xs text-muted-foreground border-l border-border pl-4 md:inline font-mono">
             Multi-language AI Engine
           </span>
         </div>
 
-        {/* Mobile / Tablet Segmented Panel Switcher */}
-        <div className="flex lg:hidden items-center border border-foreground bg-secondary/40 font-mono text-xs">
-          <button
-            type="button"
-            onClick={() => setMobileTab("explorer")}
-            className={cn(
-              "px-2 py-1 text-[11px] cursor-pointer transition-colors flex items-center gap-1",
-              mobileTab === "explorer"
-                ? "bg-foreground text-background font-semibold"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-            title="Show Files Explorer"
-          >
-            <Files className="size-3" />
-            <span className="hidden sm:inline">Files</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setMobileTab("editor")}
-            className={cn(
-              "px-2 py-1 text-[11px] cursor-pointer transition-colors border-x border-border flex items-center gap-1",
-              mobileTab === "editor"
-                ? "bg-foreground text-background font-semibold"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-            title="Show Code Editor"
-          >
-            <FileCode2 className="size-3" />
-            <span className="hidden sm:inline">Code</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setMobileTab("assistant")}
-            className={cn(
-              "px-2 py-1 text-[11px] cursor-pointer transition-colors flex items-center gap-1",
-              mobileTab === "assistant"
-                ? "bg-foreground text-background font-semibold"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-            title="Show AI Assistant"
-          >
-            <Sparkles className="size-3" />
-            <span className="hidden sm:inline">AI</span>
-            {loading && <span className="size-1 rounded-full bg-vermilion animate-ping" />}
-          </button>
-        </div>
-
         {/* Global Controls & Action Buttons */}
-        <div className="flex items-center gap-1.5 sm:gap-3 text-sm">
+        <div className="flex items-center gap-3 text-sm">
           {/* RUN CODE BUTTON */}
           <Button
             size="sm"
             onClick={executeCode}
             disabled={executing}
-            className="h-7 gap-1 px-2 sm:px-3 bg-emerald-800 hover:bg-emerald-900 text-white font-mono text-xs uppercase tracking-wider rounded-none cursor-pointer"
-            title="Run Code"
+            className="h-7 gap-1.5 px-3 bg-emerald-800 hover:bg-emerald-900 text-white font-mono text-xs uppercase tracking-wider rounded-none cursor-pointer"
           >
             <Play className="size-3 fill-current" />
-            <span className="hidden sm:inline">{executing ? "Running..." : "Run Code"}</span>
-            <span className="sm:hidden">{executing ? "..." : "Run"}</span>
+            {executing ? "Running..." : "Run Code"}
           </Button>
 
           {/* TERMINAL DRAWER TOGGLE */}
@@ -856,23 +770,23 @@ export function Lab() {
             type="button"
             onClick={() => setTerminalOpen((v) => !v)}
             className={cn(
-              "flex h-7 items-center gap-1 border border-border px-1.5 sm:px-2.5 font-mono text-xs cursor-pointer",
+              "flex h-7 items-center gap-1.5 border border-border px-2.5 font-mono text-xs cursor-pointer",
               terminalOpen ? "bg-foreground text-background" : "hover:bg-secondary text-foreground"
             )}
             title="Toggle Output / Terminal panel"
           >
             <Terminal className="size-3" />
-            <span className="hidden md:inline">Terminal</span>
+            <span>Terminal</span>
           </button>
 
-          <div className="hidden sm:block h-4 w-px bg-border mx-0.5" />
+          <div className="h-4 w-px bg-border mx-1" />
 
-          <span className="hidden text-muted-foreground md:inline text-xs font-mono">Reply in:</span>
+          <span className="hidden text-muted-foreground sm:inline text-xs font-mono">Reply in:</span>
           <Select value={replyLanguage} onValueChange={setReplyLanguage}>
             <SelectTrigger
               size="sm"
               aria-label="Reply language"
-              className="h-7 w-20 sm:w-28 border-b-foreground text-xs font-medium"
+              className="h-7 w-28 border-b-foreground text-xs font-medium"
             >
               <SelectValue />
             </SelectTrigger>
@@ -888,11 +802,11 @@ export function Lab() {
       </header>
 
       {/* Main Multi-Column Workbench */}
-      <div className="flex flex-1 min-h-0 flex-col lg:grid lg:grid-cols-[48px_220px_minmax(0,1fr)_minmax(360px,32%)]">
-        {/* Activity Bar (Desktop only) */}
+      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[48px_220px_minmax(0,1fr)_minmax(380px,34%)]">
+        {/* Activity Bar */}
         <nav
           aria-label="Activity"
-          className="hidden flex-col items-center justify-between border-r border-foreground bg-secondary py-3 lg:flex"
+          className="hidden flex-col items-center justify-between border-r border-foreground bg-secondary py-3 md:flex"
         >
           <div className="flex flex-col items-center gap-2">
             <button
@@ -918,10 +832,7 @@ export function Lab() {
         {/* Explorer Sidebar */}
         <aside
           aria-label="Explorer"
-          className={cn(
-            "min-h-0 flex-col border-r border-foreground bg-card select-none",
-            mobileTab === "explorer" ? "flex flex-1" : "hidden lg:flex"
-          )}
+          className="hidden min-h-0 flex-col border-r border-foreground bg-card md:flex select-none"
         >
           {/* Explorer Header with Actions */}
           <div className="flex h-9 items-center justify-between border-b border-border px-3 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
@@ -1024,13 +935,7 @@ export function Lab() {
         </aside>
 
         {/* Center Editor Column with Bottom Terminal Drawer */}
-        <section
-          className={cn(
-            "relative min-h-0 min-w-0 flex-col bg-background",
-            mobileTab === "editor" ? "flex flex-1" : "hidden lg:flex"
-          )}
-          aria-label="Editor"
-        >
+        <section className="flex min-h-0 min-w-0 flex-col bg-background" aria-label="Editor">
           {/* Top File Tabs Bar */}
           <div
             role="tablist"
@@ -1101,12 +1006,12 @@ export function Lab() {
                     </div>
                   }
                   options={{
-                    minimap: { enabled: !isMobile },
-                    fontSize: isMobile ? 13 : 14,
+                    minimap: { enabled: true, renderCharacters: false, scale: 1 },
+                    fontSize: 14,
                     fontFamily: "'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace",
                     fontLigatures: true,
-                    lineHeight: isMobile ? 22 : 24,
-                    padding: { top: isMobile ? 10 : 16, bottom: isMobile ? 10 : 16 },
+                    lineHeight: 24,
+                    padding: { top: 16, bottom: 16 },
                     scrollBeyondLastLine: false,
                     roundedSelection: false,
                     automaticLayout: true,
@@ -1116,11 +1021,7 @@ export function Lab() {
                     bracketPairColorization: { enabled: false },
                     renderLineHighlight: "line",
                     guides: { indentation: true },
-                    scrollbar: {
-                      verticalScrollbarSize: isMobile ? 6 : 8,
-                      horizontalScrollbarSize: isMobile ? 6 : 8,
-                    },
-                    lineNumbersMinChars: isMobile ? 3 : 5,
+                    scrollbar: { verticalScrollbarSize: 8 },
                   }}
                 />
               </EditorErrorBoundary>
@@ -1129,29 +1030,28 @@ export function Lab() {
 
           {/* Collapsible Bottom Terminal / Console Drawer */}
           {terminalOpen && (
-            <div className="flex h-44 sm:h-56 max-h-[50dvh] shrink-0 flex-col border-t-2 border-foreground bg-card select-none">
-              <div className="flex h-8 shrink-0 items-center justify-between border-b border-border bg-secondary px-2 sm:px-3 text-xs font-mono">
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <span className="font-semibold text-foreground uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+            <div className="flex h-56 shrink-0 flex-col border-t-2 border-foreground bg-card select-none">
+              <div className="flex h-8 items-center justify-between border-b border-border bg-secondary px-3 text-xs font-mono">
+                <div className="flex items-center gap-3">
+                  <span className="font-semibold text-foreground uppercase tracking-wider flex items-center gap-1.5">
                     <Terminal className="size-3.5" />
-                    <span className="hidden sm:inline">TERMINAL OUTPUT</span>
-                    <span className="sm:hidden">OUTPUT</span>
+                    Terminal Output
                   </span>
                   {execDuration !== null && (
-                    <span className="text-[11px] text-muted-foreground truncate">
-                      {execDuration}ms
+                    <span className="text-[11px] text-muted-foreground">
+                      Finished in {execDuration}ms
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                  <div className="flex items-center gap-1 border-r border-border pr-1.5 sm:pr-2 mr-0.5 sm:mr-1">
-                    <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider hidden xs:inline">stdin:</span>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 border-r border-border pr-2 mr-1">
+                    <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider">stdin:</span>
                     <input
                       type="text"
                       value={stdinValue}
                       onChange={(e) => setStdinValue(e.target.value)}
-                      placeholder="Input..."
-                      className="h-5 w-24 sm:w-44 bg-background border border-border px-1.5 font-mono text-[11px] outline-none focus:border-foreground text-foreground placeholder:text-muted-foreground/60"
+                      placeholder="Input for scanf / input()..."
+                      className="h-5 w-44 bg-background border border-border px-1.5 font-mono text-[11px] outline-none focus:border-foreground text-foreground placeholder:text-muted-foreground/60"
                       title="Standard input passed to program when executed"
                     />
                   </div>
@@ -1163,7 +1063,7 @@ export function Lab() {
                     title="Re-run code"
                   >
                     <RotateCw className={cn("size-3", executing && "animate-spin")} />
-                    <span className="hidden sm:inline">Rerun</span>
+                    <span>Rerun</span>
                   </button>
                   <button
                     type="button"
@@ -1172,7 +1072,7 @@ export function Lab() {
                     title="Clear console"
                   >
                     <Trash2 className="size-3" />
-                    <span className="hidden sm:inline">Clear</span>
+                    <span>Clear</span>
                   </button>
                   <button
                     type="button"
@@ -1223,10 +1123,7 @@ export function Lab() {
         {/* Right Assistant Column */}
         <aside
           aria-label="Assistant"
-          className={cn(
-            "min-h-0 min-w-0 flex-col bg-card select-none lg:border-l lg:border-foreground",
-            mobileTab === "assistant" ? "flex flex-1" : "hidden lg:flex"
-          )}
+          className="flex min-h-0 min-w-0 flex-col border-t border-foreground bg-card md:border-t-0 md:border-l select-none"
         >
           {/* Mode Selector Tabs */}
           <div className="shrink-0 border-b border-foreground">
@@ -1366,32 +1263,32 @@ export function Lab() {
         </aside>
       </div>
 
-      {/* Bottom Status Bar */}
-      <footer className="flex h-6 shrink-0 items-center justify-between bg-foreground px-2 sm:px-3 font-mono text-[11px] text-background select-none">
-        <div className="flex items-center gap-2 sm:gap-4 truncate">
-          <span className="flex items-center gap-1.5 shrink-0">
+      {/* VS Code Bottom Status Bar */}
+      <footer className="flex h-6 shrink-0 items-center justify-between bg-foreground px-3 font-mono text-[11px] text-background select-none">
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5">
             <span className={cn("size-1.5", loading || executing ? "anim-caret bg-vermilion" : "bg-background")} />
-            {loading ? "thinking" : executing ? "running" : "ready"}
+            {loading ? "ai thinking" : executing ? "running code" : "ready"}
           </span>
           {currentAssistantData.usedModel && (
-            <span className="hidden md:inline opacity-70">{currentAssistantData.usedModel}</span>
+            <span className="hidden opacity-70 sm:inline">{currentAssistantData.usedModel}</span>
           )}
         </div>
-        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+        <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => setTerminalOpen((v) => !v)}
             className="hover:underline flex items-center gap-1"
           >
             <Terminal className="size-2.5" />
-            <span>{terminalOpen ? "Hide" : "Show"} Terminal</span>
+            <span>{terminalOpen ? "Hide Terminal" : "Show Terminal"}</span>
           </button>
           <span>
             Ln {cursor.line}, Col {cursor.col}
           </span>
           <span className="hidden sm:inline">{active.language}</span>
-          <span className="hidden md:inline">reply: {replyLanguage}</span>
-          <span className="hidden lg:inline opacity-70">Ctrl+Enter to ask AI</span>
+          <span className="hidden sm:inline">reply: {replyLanguage}</span>
+          <span className="hidden opacity-70 md:inline">Ctrl+Enter to ask AI</span>
         </div>
       </footer>
     </div>
